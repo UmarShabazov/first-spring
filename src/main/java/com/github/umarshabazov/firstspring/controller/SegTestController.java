@@ -1,9 +1,7 @@
 package com.github.umarshabazov.firstspring.controller;
 
-import org.springframework.context.annotation.EnableMBeanExport;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.*;
@@ -23,40 +21,39 @@ public class SegTestController {
         }
     }
 
-
     @GetMapping("/top/{anyInteger}")
     public String[] getUrl(@PathVariable Integer anyInteger) {
 
         List<Integer> values = new ArrayList<>(url.values());
-        Integer[] arr = new Integer[values.size()];
-        values.toArray(arr);
-        String[] strings = new String[anyInteger];
+        Integer[] arr = values.toArray(new Integer[0]);
+        String[] results = new String[anyInteger];
 
-        for (int i = 0; i < arr.length - 1; i++) {
+
+        for (int i = 0; i < values.size() - 1; i++) {
             int minIndex = i;
-            for (int j = i; j < arr.length; j++) {
-                if (arr[minIndex] < arr[j]) {
+            for (int j = i; j < values.size(); j++) {
+                if (values.get(minIndex) < values.get(j)) {
                     minIndex = j;
                 }
             }
-            int tmp = arr[i];
-            arr[i] = arr[minIndex];
-            arr[minIndex] = tmp;
+            int tmp = values.get(i);
+            values.set(i, values.get(minIndex));
+            values.set(minIndex, tmp);
+
         }
 
         if (anyInteger > 0) {
 
-            for (Map.Entry<String, Integer> stringIntegerEntry : url.entrySet()) {
+            for (Map.Entry<String, Integer> name2Count : url.entrySet()) {
 
                 for (int k = 0; k < anyInteger; k++) {
-                    if (stringIntegerEntry.getValue().equals(arr[k])) {
-                        strings[k] = stringIntegerEntry.getKey();
+                    if (name2Count.getValue().equals(values.get(k))) {
+                        results[k] = name2Count.getKey();
                     }
                 }
             }
 
-
         }
-        return strings;
+        return results;
     }
 }
